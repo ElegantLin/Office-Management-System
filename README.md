@@ -39,7 +39,7 @@ The Best or Nothing.
 My code & my life & my style.
 
 
-# This project consists of 3 members and 2 instructors.
+## This project consists of 3 members and 2 instructors.
 * Elegant LIN (EECS Junior)
 * Yutong NIE (CS sophomore)
 * Yifan HUANG (CS Junior)
