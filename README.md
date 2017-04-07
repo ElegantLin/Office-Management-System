@@ -48,7 +48,7 @@ We are all from School of Electrical and Information Engineering, Tongji Univers
 
 
 * Zhiyu TANG (Party Office of Tongji University)
-* Haoyang LIU (Teacher of School of Electrical and Information Engineering0
+* Haoyang LIU (Teacher of School of Electrical and Information Engineering)
 
 They are instructors.
 
