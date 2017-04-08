@@ -74,12 +74,12 @@ namespace excel1
                     }
                 }
 
-                //Word.Application word = new Word.Application();
-                //word.Visible = true;
-                //Word.Document document = word.Documents.Open(word_address, missing, false, true, missing, missing, missing, missing
-                //    , missing, missing, missing, true, true, missing, missing, missing);
-                //document.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
-                
+                Word.Application word = new Word.Application();
+                word.Visible = true;
+                Word.Document newdoc;
+                newdoc = word.Documents.Add(missing, missing, missing, true);
+                newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+
                 string[,] content = new string[rowNum - 2, colNum - 1];
                 
                 ArrayList al = new ArrayList();
@@ -122,13 +122,14 @@ namespace excel1
                     message = beginning + leader + '，' + zidingyu + date + am + "在" + place +
                         "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
                     Console.WriteLine(message);
+                    word.Quit();
                 }
 
             }
             catch (Exception ex)
             {
-                
                 excel.Application.Workbooks.Close();
+                excel.Quit();
                 Console.WriteLine("Exception" + ex);
             }
             excel.Application.Workbooks.Close();
