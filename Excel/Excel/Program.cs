@@ -27,11 +27,13 @@ namespace excel1
             Excel.Application excel = new Excel.Application();
             string excel_address = "C:\\Users\\Elegant\\Desktop\\1.xls";
             string word_address = "C:\\Users\\Elegant\\Desktop\\1.doc";
-            string thanksEnding = "候会，收到烦复！党办小唐";
-            string endingPlease = "请您会期关心时间情况通报的群消息，并提前在";
+            string thanksEnding = "收到烦复！党办小唐";
+            string endingPlease = "请您会期关心时间情况通报的群消息，";
             string beginning = "尊敬的";
             string zidingyu = "兹定于";
             string please = "，请您于";
+            string date = "";
+            string place = "";
 
             try
             {
@@ -53,7 +55,7 @@ namespace excel1
                 string time_address_string = ((object)time_address.Value2).ToString();
                 string[] sArray = time_address_string.Split(new char[2]{' ','：' });
                 int j = 0;
-                string date, place;
+                
                 for(int i = 0;i<sArray.Length;i++)
                 {
                     if (sArray[i] == "时间" || sArray[i] == "地点" || sArray[i] == " " || sArray[i] == "")
@@ -72,72 +74,55 @@ namespace excel1
                     }
                 }
 
-
-
-                //Get other elements
-                //Excel.Range topics = worksheet.Cells.get_Range("B2", "B" + rowNum);
-                //Excel.Range presenter = worksheet.Cells.get_Range("C2", "C" + rowNum);
-                //Excel.Range school_leader = worksheet.Cells.get_Range("D2", "D" + rowNum);
-                //Excel.Range others = worksheet.Cells.get_Range("E2", "E" + rowNum);
-                //Excel.Range time = worksheet.Cells.get_Range("F2", "F" + rowNum);
-
-
-                //From Range to object
-                //object[,] topic_o = (object[,])topics.Value2;
-                //object[,] presenter_o = (object[,])presenter.Value2;
-                //object[,] school_leader_o = (object[,])school_leader.Value2;
-                //object[,] others_o = (object[,])others.Value2;
-                //object[,] time_o = (object[,])time.Value2;
-
-                Word.Application word = new Word.Application();
-                word.Visible = true;
-                Word.Document document = word.Documents.Open(word_address, missing, false, true, missing, missing, missing, missing
-                    , missing, missing, missing, true, true, missing, missing, missing);
-                document.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+                //Word.Application word = new Word.Application();
+                //word.Visible = true;
+                //Word.Document document = word.Documents.Open(word_address, missing, false, true, missing, missing, missing, missing
+                //    , missing, missing, missing, true, true, missing, missing, missing);
+                //document.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
                 
                 string[,] content = new string[rowNum - 2, colNum - 1];
                 
                 ArrayList al = new ArrayList();
-                string message = beginning; // 尊敬的
+                string message = ""; // 尊敬的
 
-                for (int i = 2; i <= rowNum - 1; i++)
+                for (int i = 3; i <= rowNum - 1; i++)
                 {
-                    string[] others = worksheet.Cells[i, 4].Value.ToString().Split(new char[2] { '、', '，' });
-                    string topic = worksheet.Cells[i, 1].Value.ToString();
-                    string presenter = worksheet.Cells[i, 2].Value.ToString();
-                    string leader = worksheet.Cells[i, 3].Value.ToString();
-                    string time = worksheet.Cells[i, 5].Value.ToString();
+                    string[] others = worksheet.Cells[5,i].Value.ToString().Split(new char[2] { '、', '，' });
+                    string topic = worksheet.Cells[2,i].Value.ToString();
+                    string presenter = (worksheet.Cells[3,i].Value == null) ? "" : worksheet.Cells[i, 4].Value.ToString();
+                    string leader = (worksheet.Cells[4,i].Value == null) ? "" : worksheet.Cells[4, i].Value.ToString();
+                    string time = (worksheet.Cells[6,i].Value == null)?"": worksheet.Cells[6, i].Value.ToString();
+                    string am = "";
+
+                    string[] hour = time.Split(new char[3] { '：', '-', ' ' });
+                    string[] start = time.Split(new char[2] { '-', ' ' });
+                    string startTime = start[0];
+
+                    int hour_i = int.Parse(hour[0]);
+
+                    if (hour_i > 0 && hour_i < 6)
+                    {
+                        am = "下午";
+                    }
+                    else
+                        am = "上午";
 
                     foreach (string temp in others)
                     {
                         al.Add(temp);
                     }
-                    //for (j = 1; j < colNum; j++)
-                    //{
-                    //    content[i - 2, j - 1] = worksheet.Cells[i, j].Value.ToString();
-                    //    if (j == 3)
-                    //    {
-                    //        string[] others = content[i - 2, j].Split(new char[2] { '、', '，' });
-                    //        foreach(string temp in others)
-                    //        {
-                    //            al.Add(temp);
-                    //        }
-                    //    }
-                    //}
+
                     foreach (Array array in al)
                     {
-                        //message = message + array.ToString() + '，' + zidingyu + content[] 
+                        message = beginning + array.ToString() + '，' + zidingyu + date + am + "在" + place +
+                            "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                        Console.WriteLine(message);
                     }
-                   
-                   
+
+                    message = beginning + leader + '，' + zidingyu + date + am + "在" + place +
+                        "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                    Console.WriteLine(message);
                 }
-
-                
-
-                //for(int i = 0;i<others_str.Length;i++)
-                //{
-
-                //}
 
             }
             catch (Exception ex)
