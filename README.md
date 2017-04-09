@@ -42,7 +42,7 @@ My code & my life & my style.
 * Prepare your *.xls file
 * There should be no Chinese character in the file name and the path
 * Replace Line 29 with your directory
-* Your directory should be like this "C:\\Users\\Elegant\\Desktop\\1.xls"
+* Your directory should be like this "C:\\\\Users\\\\Elegant\\\\Desktop\\\\1.xls"
 
 ## This project consists of 3 members and 2 instructors.
 * Elegant LIN (EECS Junior)
