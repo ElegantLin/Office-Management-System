@@ -25,8 +25,9 @@ namespace excel1
         static void Main(string[] args)
         {
             Excel.Application excel = new Excel.Application();
-            string excel_address = "C:\\Users\\Elegant\\Desktop\\1.xls";
-            string word_address = "C:\\Users\\Elegant\\Desktop\\1.doc";
+            
+            string excel_address = "Use your directory";
+
             string thanksEnding = "收到烦复！党办小唐";
             string endingPlease = "请您会期关心时间情况通报的群消息，";
             string beginning = "尊敬的";
@@ -34,6 +35,8 @@ namespace excel1
             string please = "，请您于";
             string date = "";
             string place = "";
+            Word.Application word = new Word.Application();
+            
 
             try
             {
@@ -74,7 +77,6 @@ namespace excel1
                     }
                 }
 
-                Word.Application word = new Word.Application();
                 word.Visible = true;
                 Word.Document newdoc;
                 newdoc = word.Documents.Add(missing, missing, missing, true);
@@ -87,11 +89,12 @@ namespace excel1
 
                 for (int i = 3; i <= rowNum - 1; i++)
                 {
-                    string[] others = worksheet.Cells[5,i].Value.ToString().Split(new char[2] { '、', '，' });
-                    string topic = worksheet.Cells[2,i].Value.ToString();
-                    string presenter = (worksheet.Cells[3,i].Value == null) ? "" : worksheet.Cells[i, 4].Value.ToString();
-                    string leader = (worksheet.Cells[4,i].Value == null) ? "" : worksheet.Cells[4, i].Value.ToString();
-                    string time = (worksheet.Cells[6,i].Value == null)?"": worksheet.Cells[6, i].Value.ToString();
+                    string[] others = worksheet.Cells[i,5].Value.ToString().Split(new char[2] { '、', '，' });
+                    string topic = worksheet.Cells[i, 2].Value.ToString();
+                    topic = topic.Replace("\n", "");
+                    string presenter = (worksheet.Cells[i,3].Value == null) ? "" : worksheet.Cells[i, 3].Value.ToString();
+                    string leader = (worksheet.Cells[i,4].Value == null) ? "" : worksheet.Cells[i, 4].Value.ToString();
+                    string time = (worksheet.Cells[i,6].Value == null)?"": worksheet.Cells[i, 6].Value.ToString();
                     string am = "";
 
                     string[] hour = time.Split(new char[3] { '：', '-', ' ' });
@@ -112,19 +115,22 @@ namespace excel1
                         al.Add(temp);
                     }
 
-                    foreach (Array array in al)
+                   for(int k = 0;k<al.Count;k++)
                     {
-                        message = beginning + array.ToString() + '，' + zidingyu + date + am + "在" + place +
+                        message = beginning + al[k].ToString() + '，' + zidingyu + date + am + "在" + place +
                             "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                        newdoc.Paragraphs.Last.Range.Text = message;
                         Console.WriteLine(message);
                     }
-
+                    newdoc.Paragraphs.Last.Range.Text = "\n";
                     message = beginning + leader + '，' + zidingyu + date + am + "在" + place +
                         "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                    newdoc.Paragraphs.Last.Range.Text = message;
                     Console.WriteLine(message);
-                    word.Quit();
+                    
                 }
 
+                word.Quit();
             }
             catch (Exception ex)
             {
@@ -132,7 +138,10 @@ namespace excel1
                 excel.Quit();
                 Console.WriteLine("Exception" + ex);
             }
+            
             excel.Application.Workbooks.Close();
+            excel.Quit();
+
        
         }
     }
