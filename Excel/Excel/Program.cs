@@ -22,13 +22,47 @@ namespace excel1
     {
         static object missing = System.Reflection.Missing.Value;
 
+        ArrayList get_time(int row_num, Excel.Worksheet worksheet)
+        {
+            for (int i = 0;i<row_num;i++)
+            {
+                string time = (worksheet.Cells[i, 6].Value == null) ? "" : worksheet.Cells[i, 6].Value.ToString();
+                string am = "";
+
+                string[] hour = time.Split(new char[4] { '：', '-', ' ', ':' });
+                string[] start = time.Split(new char[2] { '-', ' ' });
+                string startTime = start[0];
+
+                int hour_i = int.Parse(hour[0]);
+
+                if (hour_i > 0 && hour_i < 6)
+                {
+                    am = "下午";
+                }
+                else
+                    am = "上午";
+
+            }
+            return null;
+        }
+
         static void Main(string[] args)
         {
             Excel.Application excel = new Excel.Application();
             
-            string excel_address = "Use your directory";
-
+            string excel_address = "C:\\Users\\Elegant\\Desktop\\1.xls";
+            Console.WriteLine("请确认您是否需要最后输出/n");
             string thanksEnding = "收到烦复！党办小唐";
+            Console.WriteLine(thanksEnding);
+            Console.WriteLine("y/n");
+            string option = Console.ReadLine();
+            if (option == "y" || option == "Y") ;
+            else
+            {
+                Console.WriteLine("请输入您想要修改成的结词（无需再次输入‘！党办小唐’）");
+                string thanksEnding_edited = Console.ReadLine();
+                thanksEnding = thanksEnding_edited + "！党办小唐";
+            }
             string endingPlease = "请您会期关心时间情况通报的群消息，";
             string beginning = "尊敬的";
             string zidingyu = "兹定于";
@@ -92,42 +126,47 @@ namespace excel1
                     string[] others = worksheet.Cells[i,5].Value.ToString().Split(new char[2] { '、', '，' });
                     string topic = worksheet.Cells[i, 2].Value.ToString();
                     topic = topic.Replace("\n", "");
+
                     string presenter = (worksheet.Cells[i,3].Value == null) ? "" : worksheet.Cells[i, 3].Value.ToString();
+                    string[] presenter_array = presenter.Split(new char[2] { '，', '、' });
+
                     string leader = (worksheet.Cells[i,4].Value == null) ? "" : worksheet.Cells[i, 4].Value.ToString();
-                    string time = (worksheet.Cells[i,6].Value == null)?"": worksheet.Cells[i, 6].Value.ToString();
-                    string am = "";
+                    string[] leader_array = leader.Split(new char[2] { '，', '、' });
 
-                    string[] hour = time.Split(new char[3] { '：', '-', ' ' });
-                    string[] start = time.Split(new char[2] { '-', ' ' });
-                    string startTime = start[0];
-
-                    int hour_i = int.Parse(hour[0]);
-
-                    if (hour_i > 0 && hour_i < 6)
-                    {
-                        am = "下午";
-                    }
-                    else
-                        am = "上午";
-
-                    foreach (string temp in others)
-                    {
-                        al.Add(temp);
-                    }
-
-                   for(int k = 0;k<al.Count;k++)
-                    {
-                        message = beginning + al[k].ToString() + '，' + zidingyu + date + am + "在" + place +
-                            "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
-                        newdoc.Paragraphs.Last.Range.Text = message;
-                        Console.WriteLine(message);
-                    }
-                    newdoc.Paragraphs.Last.Range.Text = "\n";
-                    message = beginning + leader + '，' + zidingyu + date + am + "在" + place +
-                        "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
-                    newdoc.Paragraphs.Last.Range.Text = message;
-                    Console.WriteLine(message);
                     
+
+                    //newdoc.Paragraphs.Last.Range.Text = topic;
+                    //newdoc.Paragraphs.Last.Range.Text = "\n";
+
+                   //for(int k=0;k<presenter_array.Length;k++)
+                   // {
+                   //     message = beginning + presenter_array[k] + '，' + zidingyu + date + am + "在" + place +
+                   //         "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                   //     newdoc.Paragraphs.Last.Range.Text = message;
+                   // }
+
+                   //for(int k=0;k<leader_array.Length;k++)
+                   // {
+                   //     message = beginning + leader_array[k] + '，' + zidingyu + date + am + "在" + place +
+                   //         "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                   //     newdoc.Paragraphs.Last.Range.Text = message;
+                   // }
+
+                   //for(int k = 0;k<al.Count;k++)
+                   // {
+                   //     message = beginning + al[k].ToString() + '，' + zidingyu + date + am + "在" + place +
+                   //         "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                   //     newdoc.Paragraphs.Last.Range.Text = message;
+                   //     Console.WriteLine(message);
+                   // }
+                   // newdoc.Paragraphs.Last.Range.Text = "\n";
+                   // message = beginning + leader + '，' + zidingyu + date + am + "在" + place +
+                   //     "召开" + topic + "会议，" + endingPlease + thanksEnding + "\n";
+                   // newdoc.Paragraphs.Last.Range.Text = message;
+                   // Console.WriteLine(message);
+
+                   // newdoc.Paragraphs.Last.Range.Text = "\n";
+                   // newdoc.Paragraphs.Last.Range.Text = "\n";
                 }
 
                 word.Quit();
@@ -142,7 +181,6 @@ namespace excel1
             excel.Application.Workbooks.Close();
             excel.Quit();
 
-       
         }
     }
 }
