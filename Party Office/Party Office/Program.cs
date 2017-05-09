@@ -25,22 +25,28 @@ namespace Party_Office
     class Person
     {
         string name;
-        List<int> conference;
-        List<bool> presentation;
+        List<int> presentation;
+        List<int> participant;
 
         public Person(string Name)
         {
             name = Name;
-            conference = new List<int>();
-            presentation = new List<bool>();
+            presentation = new List<int>();
+            participant = new List<int>();
         }
 
         public string Name { get => name; set => name = value; }
+        public List<int> Presentation { get => presentation; set => presentation = value; }
+        public List<int> Participant { get => participant; set => participant = value; }
 
-        public void Add(int conferenceNo, bool Presentation)
+        public void AddPre(int preNo)
         {
-            conference.Add(conferenceNo);
-            presentation.Add(Presentation);
+            presentation.Add(preNo);
+        }
+
+        public void AddPar(int ParNo)
+        {
+            participant.Add(ParNo);
         }
     }
 
@@ -142,12 +148,14 @@ namespace Party_Office
                 {
                     if(IsInPersonList(person_list,conf.Participant[i]))
                     {
+                        ///Not Presentation
                         Merge(person_list, conf.Participant[i], k, false);
                     }
                     else
                     {
                         Person per = new Person(conf.Participant[i]);
-                        per.Add(k, false);
+                        ///
+                        per.AddPar(k);
                         person_list.Add(per);
                     }
                 }
@@ -156,12 +164,13 @@ namespace Party_Office
                 {
                     if (IsInPersonList(person_list, conf.Participant[i]))
                     {
+                        ///Presentation
                         Merge(person_list, conf.Participant[i], k, true);
                     }
                     else
                     {
                         Person per = new Person(conf.Participant[i]);
-                        per.Add(k, true);
+                        per.AddPre(k);
                         person_list.Add(per);
                     }
                 }
@@ -199,28 +208,43 @@ namespace Party_Office
                     break;
                 }
             }
-            Person per = person_list[i];
-            per.Add(confNum, partOrPre);
+            Person per = new Person(name);
+            if (partOrPre)
+                per.AddPre(confNum);
+            else
+                per.AddPar(confNum);
             return per;
         }
 
-        static void output(List<Person> person_list)
+        static void output(List<Person> person_list, string[] TimeAdd)
         {
             Word.Application word = new Word.Application();
             word.Visible = true;
             Word.Document newdoc;
-            try
+            newdoc = word.Documents.Add(missing, missing, missing, true);
+            newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+            foreach (Person per in person_list)
             {
-                newdoc = word.Documents.Add(missing, missing, missing, true);
-                newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
-            }
-            catch(Exception e)
-            {
-                WriteLine(e);
-            }
-            foreach(Person per in person_list)
-            {
+                try
+                {
+                    string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
+                    Word.Paragraph myPag;
+                    Word.Range myRng = newdoc.Range(0, 0);
+                    myPag = newdoc.Content.Paragraphs.Add();
+                    myRng = myPag.Range;
+                    myRng.Text = str1;
+                    myPag.Range.ListFormat.ApplyBulletDefault();
+
+                    for(int i = 0;i<per.Participant.Capacity;i++)
+                    {
+                       
+                    }
                 
+                }
+                catch(Exception e)
+                {
+                    WriteLine(e);
+                }
             }
         }
         
