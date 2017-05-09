@@ -204,7 +204,25 @@ namespace Party_Office
             return per;
         }
 
-        
+        static void output(List<Person> person_list)
+        {
+            Word.Application word = new Word.Application();
+            word.Visible = true;
+            Word.Document newdoc;
+            try
+            {
+                newdoc = word.Documents.Add(missing, missing, missing, true);
+                newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+            }
+            catch(Exception e)
+            {
+                WriteLine(e);
+            }
+            foreach(Person per in person_list)
+            {
+                
+            }
+        }
         
 
         /// <summary>
@@ -217,7 +235,6 @@ namespace Party_Office
             ///1.Open the program and the sheet.
             Excel.Application excel = new Excel.Application();
             string excel_address = "C:\\Users\\Elegant\\Desktop\\1.xls";
-            Word.Application word = new Word.Application();
             try
             {
                 excel.Visible = true;
@@ -238,7 +255,7 @@ namespace Party_Office
                 string[] TimeAddr = GetTimeAddress(worksheet);
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
-               
+                List<Person> per_list = GetPerson(conf_list);
 
             }
             catch (Exception e)
