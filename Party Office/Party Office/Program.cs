@@ -1,20 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using System.Configuration;
-using System.Web;
 using Excel = Microsoft.Office.Interop.Excel;
 using Word = Microsoft.Office.Interop.Word;
-using Microsoft.Office.Core;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Collections;
 using static System.Console;
 
 namespace Party_Office
@@ -76,8 +63,14 @@ namespace Party_Office
             participant = Participants;
         }
 
+        public string Time()
+        {
+            return startHour + ":" + startMinute + "--" + endHour +":" + endMinute;
+        }
+
         public string[] Participant { get => participant; set => participant = value; }
         public string[] Presenter { get => presenter; set => presenter = value; }
+        public string Title { get => title; set => title = value; }
     }
 
     class Program
@@ -133,6 +126,7 @@ namespace Party_Office
                 string time = (worksheet.Cells[i, 6].Value == null) ? "" : worksheet.Cells[i, 6].Value.ToString();
 
                 Conference conf = new Conference(topic, time, presenter_array, participant_array);
+                conf_list.Add(conf);
             }
             return conf_list;
         }
@@ -149,7 +143,7 @@ namespace Party_Office
                     if(IsInPersonList(person_list,conf.Participant[i]))
                     {
                         ///Not Presentation
-                        Merge(person_list, conf.Participant[i], k, false);
+                        person_list = Merge(person_list, conf.Participant[i], k, false);
                     }
                     else
                     {
@@ -162,14 +156,14 @@ namespace Party_Office
 
                 for(int i = 0;i<conf.Presenter.Length;i++)
                 {
-                    if (IsInPersonList(person_list, conf.Participant[i]))
+                    if (IsInPersonList(person_list, conf.Presenter[i]))
                     {
                         ///Presentation
-                        Merge(person_list, conf.Participant[i], k, true);
+                        person_list = Merge(person_list, conf.Presenter[i], k, true);
                     }
                     else
                     {
-                        Person per = new Person(conf.Participant[i]);
+                        Person per = new Person(conf.Presenter[i]);
                         per.AddPre(k);
                         person_list.Add(per);
                     }
@@ -188,7 +182,7 @@ namespace Party_Office
         /// <returns></returns>
         static bool IsInPersonList(List<Person> person_list, string name)
         {
-            for(int i =0;i<person_list.Capacity;i++)
+            for(int i =0;i<person_list.Count;i++)
             {
                 if (person_list[i].Name != name)
                     continue;
@@ -198,25 +192,24 @@ namespace Party_Office
             return false;
         }
 
-        static Person Merge(List<Person> person_list, string name, int confNum, bool partOrPre)
+        static List<Person> Merge(List<Person> person_list, string name, int confNum, bool partOrPre)
         {
             int i = 0;
-            for(i = 0;i<person_list.Capacity;i++)
+            for(i = 0;i<person_list.Count;i++)
             {
                 if(person_list[i].Name == name)
                 {
+                    if (partOrPre)
+                        person_list[i].AddPre(confNum);
+                    else
+                        person_list[i].AddPar(confNum);
                     break;
                 }
             }
-            Person per = new Person(name);
-            if (partOrPre)
-                per.AddPre(confNum);
-            else
-                per.AddPar(confNum);
-            return per;
+            return person_list;
         }
 
-        static void output(List<Person> person_list, string[] TimeAdd)
+        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
         {
             Word.Application word = new Word.Application();
             word.Visible = true;
@@ -228,18 +221,31 @@ namespace Party_Office
                 try
                 {
                     string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
-                    Word.Paragraph myPag;
-                    Word.Range myRng = newdoc.Range(0, 0);
-                    myPag = newdoc.Content.Paragraphs.Add();
-                    myRng = myPag.Range;
-                    myRng.Text = str1;
-                    myPag.Range.ListFormat.ApplyBulletDefault();
+                    newdoc.Paragraphs.Last.Range.Text = str1;
+                    //newdoc.Paragraphs.Last.Range.Text = "\n";
+                    //myPag.Range.ListFormat.ApplyBulletDefault();
 
-                    for(int i = 0;i<per.Participant.Capacity;i++)
+                    //Participant 
+                    for (int i = 0;i<per.Participant.Count;i++)
                     {
-                       
+                        int j = per.Participant[i];
+                        Conference con = conf_list[j];
+                        string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
+                        newdoc.Paragraphs.Last.Range.Text = subStr;
                     }
-                
+
+                    //Present 
+                    for(int i = 0;i<per.Presentation.Count;i++)
+                    {
+                        int j = per.Presentation[i];
+                        Conference con = conf_list[i];
+                        string subStr = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
+                        newdoc.Paragraphs.Last.Range.Text = subStr;
+                    }
+
+                    string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！" + "\n" + "党办小唐";
+                    newdoc.Paragraphs.Last.Range.Text = subStr1;
+                    
                 }
                 catch(Exception e)
                 {
@@ -280,6 +286,7 @@ namespace Party_Office
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
                 List<Person> per_list = GetPerson(conf_list);
+                output(per_list, TimeAddr, conf_list);
 
             }
             catch (Exception e)
