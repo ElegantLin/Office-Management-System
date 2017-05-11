@@ -12,29 +12,19 @@ namespace Party_Office
     class Person
     {
         string name;
-        List<int> presentation;
-        List<int> participant;
+        List<int> confer;
+        List<bool> preOrNot; // presentation -> 1, participant -> 0
 
         public Person(string Name)
         {
             name = Name;
-            presentation = new List<int>();
-            participant = new List<int>();
+            confer = new List<int>();
+            preOrNot = new List<bool>();
         }
 
         public string Name { get => name; set => name = value; }
-        public List<int> Presentation { get => presentation; set => presentation = value; }
-        public List<int> Participant { get => participant; set => participant = value; }
-
-        public void AddPre(int preNo)
-        {
-            presentation.Add(preNo);
-        }
-
-        public void AddPar(int ParNo)
-        {
-            participant.Add(ParNo);
-        }
+        public List<int> Confer { get => confer; set => confer = value; }
+        public List<bool> PreOrNot { get => preOrNot; set => preOrNot = value; }
     }
 
     class Conference
@@ -109,6 +99,11 @@ namespace Party_Office
             return TimeAddr;
         }
 
+        static void Sort(Person per)
+        {
+
+        }
+
         static List<Conference> GetConf(Excel.Worksheet worksheet, int rowNum)
         {
             List<Conference> conf_list = new List<Conference>();
@@ -138,41 +133,13 @@ namespace Party_Office
             int k = 0;
             foreach(Conference conf in conf_list)
             {
-                for(int i = 0;i<conf.Participant.Length;i++)
-                {
-                    if(IsInPersonList(person_list,conf.Participant[i]))
-                    {
-                        ///Not Presentation
-                        person_list = Merge(person_list, conf.Participant[i], k, false);
-                    }
-                    else
-                    {
-                        Person per = new Person(conf.Participant[i]);
-                        ///
-                        per.AddPar(k);
-                        person_list.Add(per);
-                    }
-                }
-
-                for(int i = 0;i<conf.Presenter.Length;i++)
-                {
-                    if (IsInPersonList(person_list, conf.Presenter[i]))
-                    {
-                        ///Presentation
-                        person_list = Merge(person_list, conf.Presenter[i], k, true);
-                    }
-                    else
-                    {
-                        Person per = new Person(conf.Presenter[i]);
-                        per.AddPre(k);
-                        person_list.Add(per);
-                    }
-                }
-                k++;
+                
             }
 
             return person_list;
         }
+
+
 
         /// <summary>
         /// 
@@ -194,18 +161,7 @@ namespace Party_Office
 
         static List<Person> Merge(List<Person> person_list, string name, int confNum, bool partOrPre)
         {
-            int i = 0;
-            for(i = 0;i<person_list.Count;i++)
-            {
-                if(person_list[i].Name == name)
-                {
-                    if (partOrPre)
-                        person_list[i].AddPre(confNum);
-                    else
-                        person_list[i].AddPar(confNum);
-                    break;
-                }
-            }
+            
             return person_list;
         }
 
@@ -226,22 +182,10 @@ namespace Party_Office
                     //myPag.Range.ListFormat.ApplyBulletDefault();
 
                     //Participant 
-                    for (int i = 0;i<per.Participant.Count;i++)
-                    {
-                        int j = per.Participant[i];
-                        Conference con = conf_list[j];
-                        string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
-                        newdoc.Paragraphs.Last.Range.Text = subStr;
-                    }
 
-                    //Present 
-                    for(int i = 0;i<per.Presentation.Count;i++)
-                    {
-                        int j = per.Presentation[i];
                         Conference con = conf_list[i];
-                        string subStr = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
-                        newdoc.Paragraphs.Last.Range.Text = subStr;
-                    }
+                        string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
+                        string subStr1 = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
 
                     string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！" + "\n" + "党办小唐";
                     newdoc.Paragraphs.Last.Range.Text = subStr1;
