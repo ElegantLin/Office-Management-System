@@ -25,6 +25,12 @@ namespace Party_Office
         public string Name { get => name; set => name = value; }
         public List<int> Confer { get => confer; set => confer = value; }
         public List<bool> PreOrNot { get => preOrNot; set => preOrNot = value; }
+
+        public void AddConf(int ConfNo, bool PreOrNot)
+        {
+            confer.Add(ConfNo);
+            preOrNot.Add(PreOrNot);
+        }
     }
 
     class Conference
@@ -99,10 +105,6 @@ namespace Party_Office
             return TimeAddr;
         }
 
-        static void Sort(Person per)
-        {
-
-        }
 
         static List<Conference> GetConf(Excel.Worksheet worksheet, int rowNum)
         {
@@ -133,7 +135,31 @@ namespace Party_Office
             int k = 0;
             foreach(Conference conf in conf_list)
             {
-                
+                for(int i = 0;i<conf.Participant.Length;i++)
+                {
+                    if(IsInPersonList(person_list,conf.Participant[i]))
+                    {
+                       person_list = Merge(person_list, conf.Participant[i], k, false);
+                    }
+                    else
+                    {
+                        person_list = AddParticipant(person_list, conf.Participant[i], k);
+                    }
+                }
+
+                for(int i = 0;i<conf.Presenter.Length;i++)
+                {
+
+                    if (IsInPersonList(person_list, conf.Presenter[i]))
+                    {
+                        person_list = Merge(person_list, conf.Presenter[i], k, true);
+                    }
+                    else
+                    {
+                        person_list = AddPresenter(person_list, conf.Presenter[i], k);
+                    }
+                }
+                k++;
             }
 
             return person_list;
@@ -159,44 +185,68 @@ namespace Party_Office
             return false;
         }
 
-        static List<Person> Merge(List<Person> person_list, string name, int confNum, bool partOrPre)
+        static List<Person> Merge(List<Person> person_list, string name, int confNum, bool preOrNot)
         {
-            
+            for(int i = 0;i<person_list.Count;i++)
+            {
+                if (person_list[i].Name == name)
+                {
+                    person_list[i].AddConf(confNum, preOrNot);
+                }
+                else
+                    continue;
+            }
+            return person_list;
+        }
+        
+        static List<Person> AddPresenter(List<Person> person_list, string name, int confNum)
+        {
+            Person per = new Person(name);
+            per.AddConf(confNum, true);
+            person_list.Add(per);
             return person_list;
         }
 
-        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
+        static List<Person> AddParticipant(List<Person> person_list, string name, int confNum)
         {
-            Word.Application word = new Word.Application();
-            word.Visible = true;
-            Word.Document newdoc;
-            newdoc = word.Documents.Add(missing, missing, missing, true);
-            newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
-            foreach (Person per in person_list)
-            {
-                try
-                {
-                    string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
-                    newdoc.Paragraphs.Last.Range.Text = str1;
-                    //newdoc.Paragraphs.Last.Range.Text = "\n";
-                    //myPag.Range.ListFormat.ApplyBulletDefault();
-
-                    //Participant 
-
-                        Conference con = conf_list[i];
-                        string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
-                        string subStr1 = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
-
-                    string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！" + "\n" + "党办小唐";
-                    newdoc.Paragraphs.Last.Range.Text = subStr1;
-                    
-                }
-                catch(Exception e)
-                {
-                    WriteLine(e);
-                }
-            }
+            Person per = new Person(name);
+            per.AddConf(confNum, false);
+            person_list.Add(per);
+            return person_list;
         }
+
+        //static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
+        //{
+        //    Word.Application word = new Word.Application();
+        //    word.Visible = true;
+        //    Word.Document newdoc;
+        //    newdoc = word.Documents.Add(missing, missing, missing, true);
+        //    newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+        //    foreach (Person per in person_list)
+        //    {
+        //        try
+        //        {
+        //            string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
+        //            newdoc.Paragraphs.Last.Range.Text = str1;
+        //            //newdoc.Paragraphs.Last.Range.Text = "\n";
+        //            //myPag.Range.ListFormat.ApplyBulletDefault();
+
+        //            //Participant 
+
+        //                //Conference con = conf_list[i];
+        //                string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
+        //                string subStr2 = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
+
+        //            string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！" + "\n" + "党办小唐";
+        //            newdoc.Paragraphs.Last.Range.Text = subStr1;
+                    
+        //        }
+        //        catch(Exception e)
+        //        {
+        //            WriteLine(e);
+        //        }
+        //    }
+        //}
         
 
         /// <summary>
@@ -230,7 +280,7 @@ namespace Party_Office
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
                 List<Person> per_list = GetPerson(conf_list);
-                output(per_list, TimeAddr, conf_list);
+                //output(per_list, TimeAddr, conf_list);
 
             }
             catch (Exception e)
