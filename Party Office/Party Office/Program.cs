@@ -135,18 +135,6 @@ namespace Party_Office
             int k = 0;
             foreach(Conference conf in conf_list)
             {
-                for(int i = 0;i<conf.Participant.Length;i++)
-                {
-                    if(IsInPersonList(person_list,conf.Participant[i]))
-                    {
-                       person_list = Merge(person_list, conf.Participant[i], k, false);
-                    }
-                    else
-                    {
-                        person_list = AddParticipant(person_list, conf.Participant[i], k);
-                    }
-                }
-
                 for(int i = 0;i<conf.Presenter.Length;i++)
                 {
 
@@ -159,6 +147,19 @@ namespace Party_Office
                         person_list = AddPresenter(person_list, conf.Presenter[i], k);
                     }
                 }
+
+                for (int i = 0; i < conf.Participant.Length; i++)
+                {
+                    if (IsInPersonList(person_list, conf.Participant[i]))
+                    {
+                        person_list = Merge(person_list, conf.Participant[i], k, false);
+                    }
+                    else
+                    {
+                        person_list = AddParticipant(person_list, conf.Participant[i], k);
+                    }
+                }
+
                 k++;
             }
 
@@ -215,39 +216,55 @@ namespace Party_Office
             return person_list;
         }
 
-        //static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
-        //{
-        //    Word.Application word = new Word.Application();
-        //    word.Visible = true;
-        //    Word.Document newdoc;
-        //    newdoc = word.Documents.Add(missing, missing, missing, true);
-        //    newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
-        //    foreach (Person per in person_list)
-        //    {
-        //        try
-        //        {
-        //            string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
-        //            newdoc.Paragraphs.Last.Range.Text = str1;
-        //            //newdoc.Paragraphs.Last.Range.Text = "\n";
-        //            //myPag.Range.ListFormat.ApplyBulletDefault();
+        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
+        {
+            Word.Application word = new Word.Application();
+            word.Visible = true;
+            Word.Document newdoc;
+            newdoc = word.Documents.Add(missing, missing, missing, true);
+            newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+            object unite = Word.WdUnits.wdStory;
+            foreach (Person per in person_list)
+            {
+                try
+                {
+                    string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
+                    newdoc.Paragraphs.Last.Range.Text = str1;
+                    //newdoc.Paragraphs.Last.Range.Text = "\n";
+                    //myPag.Range.ListFormat.ApplyBulletDefault();
+                    for(int i = 0;i<per.Confer.Count;i++)
+                    {
+                        if(per.PreOrNot[i])
+                        {
+                            string subStr = conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题" 
+                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
+                            word.Selection.EndKey(ref unite, ref missing);
+                            newdoc.Paragraphs.Last.Range.Text = subStr;
+                        }
+                        else
+                        {
+                            string subStr = conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
+                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" ;
+                            word.Selection.EndKey(ref unite, ref missing);
+                            newdoc.Paragraphs.Last.Range.Text = subStr;
+                        }
+                    }
 
-        //            //Participant 
-
-        //                //Conference con = conf_list[i];
-        //                string subStr = con.Time() + "列席第" + (j + 1).ToString() + "个议题" + (j + 1).ToString() + "." + con.Title + "\n";
-        //                string subStr2 = con.Time() + "汇报第" + (j + 1).ToString() + "个议题" + (j+1).ToString() + "." + con.Title + "\n";
-
-        //            string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！" + "\n" + "党办小唐";
-        //            newdoc.Paragraphs.Last.Range.Text = subStr1;
                     
-        //        }
-        //        catch(Exception e)
-        //        {
-        //            WriteLine(e);
-        //        }
-        //    }
-        //}
-        
+                    string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！\n";
+                    word.Selection.EndKey(ref unite, ref missing);
+                    newdoc.Paragraphs.Last.Range.Text = subStr1;
+                    word.Selection.EndKey(ref unite, ref missing);
+                    string subStr2 = "党办小唐\n";
+                    newdoc.Paragraphs.Last.Range.Text = subStr2;
+                }
+                catch (Exception e)
+                {
+                    WriteLine(e);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Missing Value if null
@@ -280,7 +297,7 @@ namespace Party_Office
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
                 List<Person> per_list = GetPerson(conf_list);
-                //output(per_list, TimeAddr, conf_list);
+                output(per_list, TimeAddr, conf_list);
 
             }
             catch (Exception e)
