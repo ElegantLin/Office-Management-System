@@ -109,7 +109,7 @@ namespace Party_Office
         static List<Conference> GetConf(Excel.Worksheet worksheet, int rowNum)
         {
             List<Conference> conf_list = new List<Conference>();
-            for (int i = 3; i <= rowNum - 1; i++)
+            for (int i = 4; i <= rowNum; i++)
             {
                 string topic = worksheet.Cells[i, 2].Value.ToString();
                 topic = topic.Replace("\n", "");
@@ -216,7 +216,7 @@ namespace Party_Office
             return person_list;
         }
 
-        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list)
+        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list, Excel.Worksheet worksheet)
         {
             Word.Application word = new Word.Application();
             word.Visible = true;
@@ -224,11 +224,13 @@ namespace Party_Office
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
             object unite = Word.WdUnits.wdStory;
+            string endingMessage = (worksheet.Cells[3, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
+            char symbol = (char)(9742);
             foreach (Person per in person_list)
             {
                 try
                 {
-                    string str1 = "尊敬的" + per.Name + "兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
+                    string str1 = "尊敬的" + per.Name + "，兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
                     newdoc.Paragraphs.Last.Range.Text = str1;
                     //newdoc.Paragraphs.Last.Range.Text = "\n";
                     //myPag.Range.ListFormat.ApplyBulletDefault();
@@ -244,24 +246,25 @@ namespace Party_Office
                         else
                         {
                             string subStr = conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
-                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" ;
+                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
                             word.Selection.EndKey(ref unite, ref missing);
                             newdoc.Paragraphs.Last.Range.Text = subStr;
                         }
                     }
 
-                    
-                    string subStr1 = "请您会期关心时间情况通报的群消息，并提前到会，收到烦复！\n";
                     word.Selection.EndKey(ref unite, ref missing);
-                    newdoc.Paragraphs.Last.Range.Text = subStr1;
+                    newdoc.Paragraphs.Last.Range.Text = endingMessage;
                     word.Selection.EndKey(ref unite, ref missing);
-                    string subStr2 = "党办小唐\n";
-                    newdoc.Paragraphs.Last.Range.Text = subStr2;
+
                 }
+                
                 catch (Exception e)
                 {
                     WriteLine(e);
                 }
+
+                //word.Selection.EndKey(ref unite, ref missing);
+                //newdoc.Paragraphs.Last.Range.Text = "\n";
             }
         }
 
@@ -275,7 +278,7 @@ namespace Party_Office
         {
             ///1.Open the program and the sheet.
             Excel.Application excel = new Excel.Application();
-            string excel_address = "C:\\Users\\Elegant\\Desktop\\1.xls";
+            string excel_address = "C:\\Users\\Elegant\\Desktop\\3.xls";
             try
             {
                 excel.Visible = true;
@@ -297,7 +300,7 @@ namespace Party_Office
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
                 List<Person> per_list = GetPerson(conf_list);
-                output(per_list, TimeAddr, conf_list);
+                output(per_list, TimeAddr, conf_list,worksheet);
 
             }
             catch (Exception e)
