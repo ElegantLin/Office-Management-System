@@ -225,12 +225,12 @@ namespace Party_Office
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
             object unite = Word.WdUnits.wdStory;
             string endingMessage = (worksheet.Cells[3, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
-            char symbol = (char)(9742);
+            char symbol = (char)(9632);
             foreach (Person per in person_list)
             {
                 try
                 {
-                    string str1 = "尊敬的" + per.Name + "，兹定于" + TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
+                    string str1 = "尊敬的" + per.Name + "，兹定于"  TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
                     newdoc.Paragraphs.Last.Range.Text = str1;
                     //newdoc.Paragraphs.Last.Range.Text = "\n";
                     //myPag.Range.ListFormat.ApplyBulletDefault();
