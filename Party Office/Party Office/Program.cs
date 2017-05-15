@@ -61,7 +61,8 @@ namespace Party_Office
 
         public string Time()
         {
-            return startHour + ":" + startMinute + "--" + endHour +":" + endMinute;
+            return startHour + ":" + ((startMinute < 10) ? "0" + startMinute.ToString() : startMinute.ToString())
+                + "--" + endHour + ":" + ((endMinute < 10) ? "0" + endMinute.ToString() : endMinute.ToString());
         }
 
         public string[] Participant { get => participant; set => participant = value; }
@@ -224,28 +225,30 @@ namespace Party_Office
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
             object unite = Word.WdUnits.wdStory;
-            string endingMessage = (worksheet.Cells[3, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
+            string endingMessage = (worksheet.Cells[2, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
             char symbol = (char)(9632);
             foreach (Person per in person_list)
             {
                 try
                 {
-                    string str1 = "尊敬的" + per.Name + "，兹定于"  TimeAdd[0] + "在" + TimeAdd[1] + "召开党委常委会，请您于" + '\n';
-                    newdoc.Paragraphs.Last.Range.Text = str1;
+                    string str = worksheet.Cells[1, 1].Value.ToString() + per.Name + worksheet.Cells[1, 2].Value.ToString()
+                        + worksheet.Cells[2, 1].Value.ToString() + worksheet.Cells[2, 2].Value.ToString() + worksheet.Cells[2, 3].Value.ToString()
+                        + worksheet.Cells[2, 4].Value.ToString() + worksheet.Cells[2, 5].Value.ToString();
+                    newdoc.Paragraphs.Last.Range.Text = str;
                     //newdoc.Paragraphs.Last.Range.Text = "\n";
                     //myPag.Range.ListFormat.ApplyBulletDefault();
                     for(int i = 0;i<per.Confer.Count;i++)
                     {
                         if(per.PreOrNot[i])
                         {
-                            string subStr = conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题" 
+                            string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题" 
                                 + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
                             word.Selection.EndKey(ref unite, ref missing);
                             newdoc.Paragraphs.Last.Range.Text = subStr;
                         }
                         else
                         {
-                            string subStr = conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
+                            string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
                                 + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
                             word.Selection.EndKey(ref unite, ref missing);
                             newdoc.Paragraphs.Last.Range.Text = subStr;
@@ -253,7 +256,7 @@ namespace Party_Office
                     }
 
                     word.Selection.EndKey(ref unite, ref missing);
-                    newdoc.Paragraphs.Last.Range.Text = endingMessage;
+                    newdoc.Paragraphs.Last.Range.Text = worksheet.Cells[4,1].Value.ToString();
                     word.Selection.EndKey(ref unite, ref missing);
 
                 }
