@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Excel = Microsoft.Office.Interop.Excel;
 using Word = Microsoft.Office.Interop.Word;
 using static System.Console;
+using System.Runtime.InteropServices;
 
 namespace Party_Office
 {
@@ -217,6 +218,15 @@ namespace Party_Office
             return person_list;
         }
 
+        static void quitExcel(Excel.Application excel, Excel.Workbook workbook)
+        {
+            excel.ActiveWorkbook.Close(false, missing, missing);
+            excel.Quit();
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(excel);
+            excel = null;
+        }
+
         static void output(List<Person> person_list, List<Conference> conf_list, Excel.Worksheet worksheet)
         {
             Word.Application word = new Word.Application();
@@ -225,7 +235,15 @@ namespace Party_Office
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
             object unite = Word.WdUnits.wdStory;
-            //string endingMessage = (worksheet.Cells[2, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
+
+            object start = 0;
+            object end = 0;
+
+            Word.Range rng = newdoc.Range(ref start, ref end);
+            rng.Text = "New Text";
+            rng.Select();
+
+
             char symbol = (char)(9632);
             foreach (Person per in person_list)
             {
@@ -297,16 +315,15 @@ namespace Party_Office
                 int colNum = worksheet.UsedRange.Cells.Columns.Count;
 
                 //Ready to write to word
-                //Get the date and address
-                
-                //string[] TimeAddr = GetTimeAddress(worksheet);
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
+                quitExcel(excel, workbook);
                 List<Person> per_list = GetPerson(conf_list);
+
                 output(per_list, conf_list,worksheet);
 
             }
-catch (Exception e)
+            catch (Exception e)
             {
                 WriteLine(e);
             }
