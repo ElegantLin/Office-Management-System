@@ -110,7 +110,7 @@ namespace Party_Office
         static List<Conference> GetConf(Excel.Worksheet worksheet, int rowNum)
         {
             List<Conference> conf_list = new List<Conference>();
-            for (int i = 4; i <= rowNum; i++)
+            for (int i = 7; i <= rowNum; i++)
             {
                 string topic = worksheet.Cells[i, 2].Value.ToString();
                 topic = topic.Replace("\n", "");
@@ -217,7 +217,7 @@ namespace Party_Office
             return person_list;
         }
 
-        static void output(List<Person> person_list, string[] TimeAdd, List<Conference> conf_list, Excel.Worksheet worksheet)
+        static void output(List<Person> person_list, List<Conference> conf_list, Excel.Worksheet worksheet)
         {
             Word.Application word = new Word.Application();
             word.Visible = true;
@@ -299,14 +299,14 @@ namespace Party_Office
                 //Ready to write to word
                 //Get the date and address
                 
-                string[] TimeAddr = GetTimeAddress(worksheet);
+                //string[] TimeAddr = GetTimeAddress(worksheet);
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
                 List<Person> per_list = GetPerson(conf_list);
-                output(per_list, TimeAddr, conf_list,worksheet);
+                output(per_list, conf_list,worksheet);
 
             }
-            catch (Exception e)
+catch (Exception e)
             {
                 WriteLine(e);
             }
