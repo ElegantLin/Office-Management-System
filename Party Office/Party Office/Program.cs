@@ -225,7 +225,7 @@ namespace Party_Office
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
             object unite = Word.WdUnits.wdStory;
-            string endingMessage = (worksheet.Cells[2, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
+            //string endingMessage = (worksheet.Cells[2, 1].Value == null) ? "" : worksheet.Cells[3, 1].Value.ToString();
             char symbol = (char)(9632);
             foreach (Person per in person_list)
             {
