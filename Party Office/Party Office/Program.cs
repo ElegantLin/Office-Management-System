@@ -254,31 +254,58 @@ namespace Party_Office
                     //myPag.Range.ListFormat.ApplyBulletDefault();
                     for (int i = 0;i<per.Confer.Count;i++)
                     {
-                        if(per.PreOrNot[i])
+                        if (i != 0)
                         {
-                            //word.Selection.EndKey(ref unite, ref missing);
-                            string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题" 
-                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
-                            //word.Selection.EndKey(ref unite, ref missing);
-                            word.ActiveDocument.Characters.Last.Select();  // Line 1
-                            word.Selection.Collapse();                     // Line 2
-                            word.Selection.TypeText(subStr);
+                            if (per.PreOrNot[i])
+                            {
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                string subStr = conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题"
+                                    + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                word.ActiveDocument.Characters.Last.Select();  // Line 1
+                                word.Selection.Collapse();                     // Line 2
+                                word.Selection.TypeText(subStr);
+                            }
+                            else
+                            {
+                                string subStr = conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
+                                    + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                word.ActiveDocument.Characters.Last.Select();  // Line 1
+                                word.Selection.Collapse();                     // Line 2
+                                word.Selection.TypeText(subStr);
+                            }
                         }
                         else
                         {
-                            string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
-                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
-                            //word.Selection.EndKey(ref unite, ref missing);
-                            word.ActiveDocument.Characters.Last.Select();  // Line 1
-                            word.Selection.Collapse();                     // Line 2
-                            word.Selection.TypeText(subStr);
+                            if (per.PreOrNot[i])
+                            {
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题"
+                                    + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                word.ActiveDocument.Characters.Last.Select();  // Line 1
+                                word.Selection.Collapse();                     // Line 2
+                                word.Selection.TypeText(subStr);
+                            }
+                            else
+                            {
+                                string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
+                                    + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
+                                //word.Selection.EndKey(ref unite, ref missing);
+                                word.ActiveDocument.Characters.Last.Select();  // Line 1
+                                word.Selection.Collapse();                     // Line 2
+                                word.Selection.TypeText(subStr);
+                            }
                         }
                     }
 
+                    word.ActiveDocument.Range(
+                        word.ActiveDocument.Content.End-1,word.ActiveDocument.Content.End).Select();
                     //word.Selection.EndKey(ref unite, ref missing);
                     word.ActiveDocument.Characters.Last.Select();  // Line 1
                     word.Selection.Collapse();                     // Line 2
-                    word.Selection.TypeText(worksheet.Cells[4, 1].Value.ToString() + "\n");
+                    word.Selection.TypeText(worksheet.Cells[4, 1].Value.ToString() + "\n" + "\n");
 
                 }
 
