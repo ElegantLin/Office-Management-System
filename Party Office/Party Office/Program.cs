@@ -234,14 +234,8 @@ namespace Party_Office
             Word.Document newdoc;
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
+
             object unite = Word.WdUnits.wdStory;
-
-            object start = 0;
-            object end = 0;
-
-            Word.Range rng = newdoc.Range(ref start, ref end);
-            rng.Text = "New Text";
-            rng.Select();
 
 
             char symbol = (char)(9632);
@@ -249,36 +243,45 @@ namespace Party_Office
             {
                 try
                 {
+                    //word.Selection.EndKey(ref unite, ref missing);
                     string str = worksheet.Cells[1, 1].Value.ToString() + per.Name + worksheet.Cells[1, 2].Value.ToString()
                         + worksheet.Cells[2, 1].Value.ToString() + worksheet.Cells[2, 2].Value.ToString() + worksheet.Cells[2, 3].Value.ToString()
-                        + worksheet.Cells[2, 4].Value.ToString() + worksheet.Cells[2, 5].Value.ToString();
-                    newdoc.Paragraphs.Last.Range.Text = str;
+                        + worksheet.Cells[2, 4].Value.ToString() + worksheet.Cells[2, 5].Value.ToString() + "\n";
+                    word.ActiveDocument.Characters.Last.Select();  // Line 1
+                    word.Selection.Collapse();                     // Line 2
+                    word.Selection.TypeText(str);
                     //newdoc.Paragraphs.Last.Range.Text = "\n";
                     //myPag.Range.ListFormat.ApplyBulletDefault();
-                    for(int i = 0;i<per.Confer.Count;i++)
+                    for (int i = 0;i<per.Confer.Count;i++)
                     {
                         if(per.PreOrNot[i])
                         {
+                            //word.Selection.EndKey(ref unite, ref missing);
                             string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "汇报第" + (per.Confer[i] + 1).ToString() + "个议题" 
                                 + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
-                            word.Selection.EndKey(ref unite, ref missing);
-                            newdoc.Paragraphs.Last.Range.Text = subStr;
+                            //word.Selection.EndKey(ref unite, ref missing);
+                            word.ActiveDocument.Characters.Last.Select();  // Line 1
+                            word.Selection.Collapse();                     // Line 2
+                            word.Selection.TypeText(subStr);
                         }
                         else
                         {
                             string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
                                 + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n" + symbol.ToString();
-                            word.Selection.EndKey(ref unite, ref missing);
-                            newdoc.Paragraphs.Last.Range.Text = subStr;
+                            //word.Selection.EndKey(ref unite, ref missing);
+                            word.ActiveDocument.Characters.Last.Select();  // Line 1
+                            word.Selection.Collapse();                     // Line 2
+                            word.Selection.TypeText(subStr);
                         }
                     }
 
-                    word.Selection.EndKey(ref unite, ref missing);
-                    newdoc.Paragraphs.Last.Range.Text = worksheet.Cells[4,1].Value.ToString();
-                    word.Selection.EndKey(ref unite, ref missing);
+                    //word.Selection.EndKey(ref unite, ref missing);
+                    word.ActiveDocument.Characters.Last.Select();  // Line 1
+                    word.Selection.Collapse();                     // Line 2
+                    word.Selection.TypeText(worksheet.Cells[4, 1].Value.ToString() + "\n");
 
                 }
-                
+
                 catch (Exception e)
                 {
                     WriteLine(e);
@@ -317,10 +320,12 @@ namespace Party_Office
                 //Ready to write to word
 
                 List<Conference> conf_list = GetConf(worksheet, rowNum);
-                quitExcel(excel, workbook);
+                
                 List<Person> per_list = GetPerson(conf_list);
 
                 output(per_list, conf_list,worksheet);
+
+                quitExcel(excel, workbook);
 
             }
             catch (Exception e)
