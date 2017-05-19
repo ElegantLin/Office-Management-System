@@ -303,7 +303,7 @@ namespace Party_Office
         {
             ///1.Open the program and the sheet.
             Excel.Application excel = new Excel.Application();
-            string excel_address = "C:\\Users\\Elegant\\Desktop\\3.xls";
+            string excel_address = "C:\\3.xls";
             try
             {
                 excel.Visible = true;
