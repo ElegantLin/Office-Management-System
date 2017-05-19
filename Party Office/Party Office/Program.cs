@@ -268,7 +268,7 @@ namespace Party_Office
                         else
                         {
                             string subStr = symbol.ToString() + conf_list[per.Confer[i]].Time() + "列席第" + (per.Confer[i] + 1).ToString() + "个议题"
-                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n"
+                                + (per.Confer[i] + 1).ToString() + "." + conf_list[per.Confer[i]].Title + "\n";
                             //word.Selection.EndKey(ref unite, ref missing);
                             word.ActiveDocument.Characters.Last.Select();  // Line 1
                             word.Selection.Collapse();                     // Line 2
