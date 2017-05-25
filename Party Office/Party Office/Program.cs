@@ -10,66 +10,6 @@ namespace Party_Office
     /// <summary>
     /// One person or place included
     /// </summary>
-    class Person
-    {
-        string name;
-        List<int> confer;
-        List<bool> preOrNot; // presentation -> 1, participant -> 0
-
-        public Person(string Name)
-        {
-            name = Name;
-            confer = new List<int>();
-            preOrNot = new List<bool>();
-        }
-
-        public string Name { get => name; set => name = value; }
-        public List<int> Confer { get => confer; set => confer = value; }
-        public List<bool> PreOrNot { get => preOrNot; set => preOrNot = value; }
-
-        public void AddConf(int ConfNo, bool PreOrNot)
-        {
-            confer.Add(ConfNo);
-            preOrNot.Add(PreOrNot);
-        }
-    }
-
-    class Conference
-    {
-        string title;
-        int startHour;
-        int startMinute;
-        int endHour;
-        int endMinute;
-        string[] presenter;
-        string[] participant;
-
-        public Conference(string Title, string Time, string[] Presentation, string[] Participants)
-        {
-            title = Title;
-
-            string[] start_end = Time.Trim().Split('-');
-            string[] start = start_end[0].Split(new char[2] { ':', '：' });
-            string[] end = start_end[1].Split(new char[2] { ':', '：' });
-            startHour = int.Parse(start[0]);
-            startMinute = int.Parse(start[1]);
-            endHour = int.Parse(end[0]);
-            endMinute = int.Parse(end[1]);
-
-            presenter = Presentation;
-            participant = Participants;
-        }
-
-        public string Time()
-        {
-            return startHour + ":" + ((startMinute < 10) ? "0" + startMinute.ToString() : startMinute.ToString())
-                + "--" + endHour + ":" + ((endMinute < 10) ? "0" + endMinute.ToString() : endMinute.ToString());
-        }
-
-        public string[] Participant { get => participant; set => participant = value; }
-        public string[] Presenter { get => presenter; set => presenter = value; }
-        public string Title { get => title; set => title = value; }
-    }
 
     class Program
     {
