@@ -8,6 +8,7 @@ namespace Party_Office
 {
     class Conference
     {
+        string index;
         string title;
         int startHour;
         int startMinute;
@@ -16,9 +17,10 @@ namespace Party_Office
         string[] presenter;
         string[] participant;
 
-        public Conference(string Title, string Time, string[] Presentation, string[] Participants)
+        public Conference(string Title, string Time, string[] Presentation, string[] Participants, string Index)
         {
             title = Title;
+            index = Index;
 
             string[] start_end = Time.Trim().Split('-');
             string[] start = start_end[0].Split(new char[2] { ':', '：' });

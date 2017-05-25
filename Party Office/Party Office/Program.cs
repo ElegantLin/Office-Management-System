@@ -64,7 +64,8 @@ namespace Party_Office
 
                 string time = (worksheet.Cells[i, 6].Value == null) ? "" : worksheet.Cells[i, 6].Value.ToString();
 
-                Conference conf = new Conference(topic, time, presenter_array, participant_array);
+                string index = (worksheet.Cells[i, 1].Value == null) ? "" : worksheet.Cells[i, 1].Value.ToString();
+                Conference conf = new Conference(topic, time, presenter_array, participant_array, index);
                 conf_list.Add(conf);
             }
             return conf_list;
