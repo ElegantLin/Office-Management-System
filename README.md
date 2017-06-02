@@ -42,23 +42,24 @@ My code & my life & my style.
 * Prepare your *.xls file
 * There should be no Chinese character in the file name and the path
 * Replace Line 29 with your directory
-* Your directory should be like this "C:\\\\Users\\\\Elegant\\\\Desktop\\\\1.xls"
+* Your directory should be like this "C:\\\\Users\\\\Elegant\\\\Desktop\\\\3.xls"
 
-## This project consists of 3 members and 2 instructors.
+## This project consists of 3 members and 3 instructors.
 * Elegant LIN (EECS Junior)
 * Yutong NIE (CS sophomore)
 * Yifan HUANG (CS Junior)
 
 We are all from School of Electrical and Information Engineering, Tongji University, P.R.China.
 
-
+* Zhihua WEI (Professor of Department of Computer Science and Technology)
 * Zhiyu TANG (Party Office of Tongji University)
 * Haoyang LIU (Teacher of School of Electrical and Information Engineering)
 
 They are instructors.
+By the way, this project is one of the project in SITP 13.
 
 I have updated the whole project for the needs from instructors are changed.
-May/9th/2017
+June/2th/2017
 
 Elegant in Tongji.
 
