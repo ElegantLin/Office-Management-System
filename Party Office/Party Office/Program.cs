@@ -170,8 +170,10 @@ namespace Party_Office
 
         static void output(List<Person> person_list, List<Conference> conf_list, Excel.Worksheet worksheet)
         {
-            Word.Application word = new Word.Application();
-            word.Visible = true;
+            Word.Application word = new Word.Application
+            {
+                Visible = true
+            };
             Word.Document newdoc;
             newdoc = word.Documents.Add(missing, missing, missing, true);
             newdoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4;
